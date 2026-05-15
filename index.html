@@ -5,40 +5,29 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Debug Barcode Scanner</title>
+<title>ZXing Barcode Scanner</title>
 
-<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="https://cdn.jsdelivr.net/npm/@zxing/browser@latest"></script>
 
 <style>
 
 body{
   font-family:Arial;
-  padding:20px;
   text-align:center;
-  background:#f3f4f6;
+  padding:20px;
 }
 
-#reader{
+video{
   width:320px;
-  margin:auto;
   border:2px solid blue;
   border-radius:10px;
-  overflow:hidden;
 }
 
 #result{
   margin-top:20px;
-  background:white;
+  background:#f3f4f6;
   padding:20px;
   border-radius:10px;
-}
-
-button{
-  padding:12px 20px;
-  background:blue;
-  color:white;
-  border:none;
-  border-radius:8px;
 }
 
 </style>
@@ -47,141 +36,117 @@ button{
 
 <body>
 
-<h2>📦 Debug Barcode Scanner</h2>
+<h2>📦 Barcode Scanner</h2>
 
-<button onclick="startScanner()">
-Start Scanner
-</button>
-
-<div id="reader"></div>
+<video id="video"></video>
 
 <div id="result">
-Waiting...
+Opening camera...
 </div>
 
 <script>
 
-let scanner;
-
 console.log("PAGE LOADED");
+
+const codeReader =
+  new ZXing.BrowserMultiFormatReader();
 
 async function startScanner(){
 
-  console.log("START BUTTON CLICKED");
-
-  document.getElementById("result").innerHTML =
-    "Opening camera...";
+  console.log("STARTING CAMERA");
 
   try{
 
-    console.log("CREATING SCANNER");
+    const devices =
+      await ZXing.BrowserCodeReader.listVideoInputDevices();
 
-    scanner = new Html5Qrcode("reader");
+    console.log("CAMERAS:", devices);
 
-    console.log("STARTING CAMERA");
+    const selectedDeviceId =
+      devices[0].deviceId;
 
-    await scanner.start(
+    const video =
+      document.getElementById("video");
 
-      {
-        facingMode:"environment"
-      },
+    codeReader.decodeFromVideoDevice(
 
-      {
-        fps:10,
-        qrbox:{
-          width:250,
-          height:120
-        }
-      },
+      selectedDeviceId,
 
-      async function(decodedText){
+      video,
 
-        console.log("BARCODE DETECTED");
+      async (result, err) => {
 
-        console.log("BARCODE VALUE:", decodedText);
+        if(result){
 
-        document.getElementById("result").innerHTML =
-          "Barcode Found: " + decodedText;
+          console.log("BARCODE FOUND");
 
-        try{
+          console.log(result.text);
 
-          console.log("CALLING API");
+          document.getElementById("result").innerHTML =
+            "Barcode: " + result.text;
 
-          const url =
-            "https://world.openfoodfacts.org/api/v0/product/" +
-            decodedText +
-            ".json";
+          try{
 
-          console.log("API URL:", url);
+            const response = await fetch(
+              "https://world.openfoodfacts.org/api/v0/product/" +
+              result.text +
+              ".json"
+            );
 
-          const response = await fetch(url);
+            const data = await response.json();
 
-          console.log("API RESPONSE RECEIVED");
+            console.log(data);
 
-          const data = await response.json();
+            if(data.status === 1){
 
-          console.log("API JSON:", data);
+              const p = data.product;
 
-          if(data.status === 1){
+              document.getElementById("result").innerHTML = `
 
-            console.log("PRODUCT FOUND");
+                <h3>
+                  ${p.product_name || "No Name"}
+                </h3>
 
-            const p = data.product;
+                <p>
+                  Brand:
+                  ${p.brands || "Unknown"}
+                </p>
 
-            document.getElementById("result").innerHTML = `
+                <img
+                  src="${p.image_url || ''}"
+                  width="150"
+                >
 
-              <h3>${p.product_name || "No Name"}</h3>
+              `;
 
-              <p>
-                Brand:
-                ${p.brands || "Unknown"}
-              </p>
+            }else{
 
-              <p>
-                Quantity:
-                ${p.quantity || "N/A"}
-              </p>
+              document.getElementById("result").innerHTML =
+                "Product not found";
 
-              <img src="${p.image_url || ''}" width="150">
+            }
 
-            `;
+          }catch(apiErr){
 
-          }else{
-
-            console.log("PRODUCT NOT FOUND");
-
-            document.getElementById("result").innerHTML =
-              "Product not found";
+            console.error(apiErr);
 
           }
 
-        }catch(apiError){
-
-          console.error("API ERROR:", apiError);
-
-          document.getElementById("result").innerHTML =
-            "API Error";
-
         }
 
-      },
+        if(err){
 
-      function(scanError){
+          console.log("SCANNING...");
 
-        console.log("SCANNING...");
+        }
 
       }
 
     );
 
-    console.log("CAMERA STARTED SUCCESSFULLY");
+  }catch(cameraErr){
 
-    document.getElementById("result").innerHTML =
-      "Camera started. Scan barcode.";
-
-  }catch(cameraError){
-
-    console.error("CAMERA ERROR:", cameraError);
+    console.error(cameraErr);
 
     document.getElementById("result").innerHTML =
       "Camera Error";
@@ -189,6 +154,8 @@ async function startScanner(){
   }
 
 }
+
+startScanner();
 
 </script>
 
