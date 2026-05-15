@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Working Barcode Scanner</title>
+<title>Debug Barcode Scanner</title>
 
 <script src="https://unpkg.com/html5-qrcode"></script>
 
@@ -12,15 +13,15 @@
 
 body{
   font-family:Arial;
-  text-align:center;
   padding:20px;
+  text-align:center;
   background:#f3f4f6;
 }
 
 #reader{
   width:320px;
   margin:auto;
-  border:2px solid #2563eb;
+  border:2px solid blue;
   border-radius:10px;
   overflow:hidden;
 }
@@ -32,18 +33,12 @@ body{
   border-radius:10px;
 }
 
-img{
-  width:150px;
-  margin-top:10px;
-}
-
 button{
   padding:12px 20px;
-  border:none;
-  background:#2563eb;
+  background:blue;
   color:white;
+  border:none;
   border-radius:8px;
-  margin-top:20px;
 }
 
 </style>
@@ -52,10 +47,10 @@ button{
 
 <body>
 
-<h2>📦 Barcode Scanner</h2>
+<h2>📦 Debug Barcode Scanner</h2>
 
 <button onclick="startScanner()">
-Start Camera
+Start Scanner
 </button>
 
 <div id="reader"></div>
@@ -68,42 +63,68 @@ Waiting...
 
 let scanner;
 
+console.log("PAGE LOADED");
+
 async function startScanner(){
 
-  document.getElementById("result").innerHTML =
-    "Opening Camera...";
+  console.log("START BUTTON CLICKED");
 
-  scanner = new Html5Qrcode("reader");
+  document.getElementById("result").innerHTML =
+    "Opening camera...";
 
   try{
+
+    console.log("CREATING SCANNER");
+
+    scanner = new Html5Qrcode("reader");
+
+    console.log("STARTING CAMERA");
 
     await scanner.start(
 
       {
-        facingMode: "environment"
+        facingMode:"environment"
       },
 
       {
         fps:10,
-        qrbox:200
+        qrbox:{
+          width:250,
+          height:120
+        }
       },
 
-      async (decodedText) => {
+      async function(decodedText){
+
+        console.log("BARCODE DETECTED");
+
+        console.log("BARCODE VALUE:", decodedText);
 
         document.getElementById("result").innerHTML =
           "Barcode Found: " + decodedText;
 
         try{
 
-          const response = await fetch(
+          console.log("CALLING API");
+
+          const url =
             "https://world.openfoodfacts.org/api/v0/product/" +
             decodedText +
-            ".json"
-          );
+            ".json";
+
+          console.log("API URL:", url);
+
+          const response = await fetch(url);
+
+          console.log("API RESPONSE RECEIVED");
 
           const data = await response.json();
 
+          console.log("API JSON:", data);
+
           if(data.status === 1){
+
+            console.log("PRODUCT FOUND");
 
             const p = data.product;
 
@@ -121,32 +142,49 @@ async function startScanner(){
                 ${p.quantity || "N/A"}
               </p>
 
-              <img src="${p.image_url || ''}">
+              <img src="${p.image_url || ''}" width="150">
 
             `;
 
           }else{
+
+            console.log("PRODUCT NOT FOUND");
 
             document.getElementById("result").innerHTML =
               "Product not found";
 
           }
 
-        }catch(err){
+        }catch(apiError){
+
+          console.error("API ERROR:", apiError);
 
           document.getElementById("result").innerHTML =
             "API Error";
 
         }
 
+      },
+
+      function(scanError){
+
+        console.log("SCANNING...");
+
       }
 
     );
 
-  }catch(err){
+    console.log("CAMERA STARTED SUCCESSFULLY");
 
     document.getElementById("result").innerHTML =
-      "Camera Error: " + err;
+      "Camera started. Scan barcode.";
+
+  }catch(cameraError){
+
+    console.error("CAMERA ERROR:", cameraError);
+
+    document.getElementById("result").innerHTML =
+      "Camera Error";
 
   }
 
