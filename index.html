@@ -1,31 +1,314 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
 
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Barcode Debug</title>
+<title>CEZZO Delivery</title>
 
-<script src="https://unpkg.com/html5-qrcode"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Inter',sans-serif;
+-webkit-tap-highlight-color:transparent;
+}
+
 body{
-  font-family:Arial;
-  text-align:center;
-  padding:20px;
+background:#ffffff;
+height:100vh;
+overflow:hidden;
 }
 
-#reader{
-  width:320px;
-  margin:auto;
+.app{
+width:100%;
+height:100vh;
+background:#fff;
+overflow:hidden;
+position:relative;
 }
 
-#result{
-  margin-top:20px;
-  background:#f3f4f6;
-  padding:20px;
-  border-radius:10px;
+/* SLIDES */
+
+.slider{
+position:relative;
+height:100vh;
+width:100%;
+overflow:hidden;
+}
+
+.slide{
+display:none;
+padding:22px;
+text-align:center;
+height:100vh;
+width:100%;
+position:absolute;
+top:0;
+left:0;
+background:#fff;
+flex-direction:column;
+justify-content:space-between;
+animation:slideAnim .4s ease;
+}
+
+.slide.active{
+display:flex;
+}
+
+.slide img{
+width:100%;
+height:60vh;
+object-fit:cover;
+border-radius:34px;
+box-shadow:0 20px 45px rgba(0,0,0,0.12);
+}
+
+.content{
+padding-bottom:18px;
+}
+
+.title{
+font-size:34px;
+font-weight:800;
+line-height:1.1;
+margin-bottom:14px;
+color:#111827;
+letter-spacing:-1px;
+}
+
+.desc{
+font-size:15px;
+line-height:1.8;
+color:#6b7280;
+margin-bottom:28px;
+padding:0 6px;
+}
+
+.dots{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:10px;
+margin-bottom:28px;
+}
+
+.dot{
+width:10px;
+height:10px;
+border-radius:50px;
+background:#d1d5db;
+transition:.35s;
+}
+
+.dot.active{
+width:34px;
+background:linear-gradient(135deg,#2563eb,#7c3aed);
+}
+
+.nextBtn{
+width:100%;
+padding:18px;
+border:none;
+border-radius:22px;
+background:linear-gradient(135deg,#2563eb,#7c3aed);
+color:#fff;
+font-size:16px;
+font-weight:800;
+box-shadow:0 15px 30px rgba(37,99,235,.25);
+cursor:pointer;
+transition:.3s;
+}
+
+.nextBtn:active{
+transform:scale(.98);
+}
+
+/* SIGNUP */
+
+.signup{
+display:none;
+padding:24px;
+height:100vh;
+background:#fff;
+overflow-y:auto;
+}
+
+.signup.active{
+display:block;
+animation:fadeIn .4s ease;
+}
+
+.formTitle{
+font-size:34px;
+font-weight:800;
+line-height:1.1;
+margin-top:10px;
+margin-bottom:10px;
+color:#111827;
+letter-spacing:-1px;
+}
+
+.formDesc{
+font-size:15px;
+line-height:1.7;
+color:#6b7280;
+margin-bottom:28px;
+}
+
+.inputBox{
+margin-bottom:18px;
+}
+
+.inputBox label{
+display:block;
+font-size:13px;
+font-weight:700;
+margin-bottom:9px;
+color:#374151;
+}
+
+.inputBox input{
+width:100%;
+height:58px;
+padding:0 18px;
+border:none;
+background:#f3f4f6;
+border-radius:18px;
+font-size:15px;
+font-weight:600;
+outline:none;
+transition:.3s;
+}
+
+.inputBox input:focus{
+background:#eef2ff;
+box-shadow:0 0 0 4px rgba(37,99,235,.1);
+}
+
+.signupBtn{
+width:100%;
+height:58px;
+border:none;
+border-radius:22px;
+background:#111827;
+color:#fff;
+font-size:16px;
+font-weight:800;
+margin-top:10px;
+box-shadow:0 15px 30px rgba(0,0,0,.15);
+cursor:pointer;
+transition:.3s;
+}
+
+.signupBtn:active{
+transform:scale(.98);
+}
+
+.loginText{
+text-align:center;
+margin-top:22px;
+font-size:14px;
+color:#6b7280;
+}
+
+.loginText span{
+color:#2563eb;
+font-weight:800;
+}
+
+/* ANIMATION */
+
+@keyframes slideAnim{
+from{
+opacity:0;
+transform:translateX(45px);
+}
+
+to{
+opacity:1;
+transform:translateX(0);
+}
+}
+
+@keyframes fadeIn{
+from{
+opacity:0;
+transform:translateY(20px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+@keyframes slideUp{
+
+from{
+opacity:0;
+transform:translateX(-50%) translateY(40px);
+}
+
+to{
+opacity:1;
+transform:translateX(-50%) translateY(0);
+}
+
+}
+
+
+/* UPLOAD BOX */
+
+.uploadBox{
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+background:linear-gradient(145deg,#f8fafc,#eef2ff);
+border:2px dashed #c7d2fe;
+border-radius:24px;
+padding:28px 20px;
+text-align:center;
+cursor:pointer;
+transition:.3s;
+}
+
+.uploadBox:hover{
+transform:translateY(-2px);
+border-color:#2563eb;
+background:linear-gradient(145deg,#eef2ff,#e0e7ff);
+}
+
+
+
+.uploadTitle{
+font-size:17px;
+font-weight:800;
+color:#111827;
+margin-bottom:8px;
+}
+
+.uploadDesc{
+font-size:13px;
+line-height:1.7;
+color:#6b7280;
+margin-bottom:18px;
+}
+
+.uploadBtn{
+padding:12px 22px;
+border-radius:16px;
+background:#111827;
+color:#fff;
+font-size:14px;
+font-weight:700;
 }
 
 </style>
@@ -34,129 +317,690 @@ body{
 
 <body>
 
-<h2>📦 Barcode Scanner</h2>
+<div class="app">
 
-<div id="reader"></div>
+<!-- SLIDER -->
 
-<div id="result">
-Starting...
+<div class="slider" id="slider">
+
+<!-- SLIDE 1 -->
+
+<div class="slide active">
+
+<img src="https://images.unsplash.com/photo-1526367790999-0150786686a2?q=80&w=1200&auto=format&fit=crop">
+
+<div class="title">
+Fast Delivery
 </div>
 
-<script>
+<div class="desc">
+Deliver customer orders quickly and manage deliveries smoothly.
+</div>
 
-console.log("PAGE LOADED");
+<div class="dots">
+<div class="dot active"></div>
+<div class="dot"></div>
+<div class="dot"></div>
+</div>
 
-function onScanSuccess(decodedText){
+<button class="nextBtn" onclick="nextSlide()">
+Next
+</button>
 
-  console.log("SCANNED:", decodedText);
+</div>
 
-  document.getElementById("result").innerHTML =
-    "Barcode Detected:<br><b>" +
-    decodedText +
-    "</b><br><br>Searching product...";
+<!-- SLIDE 2 -->
 
-  fetch(
-    "https://world.openfoodfacts.org/api/v0/product/" +
-    decodedText +
-    ".json"
-  )
+<div class="slide">
 
-  .then(response => {
+<img src="https://images.unsplash.com/photo-1556740749-887f6717d7e4?q=80&w=1200&auto=format&fit=crop">
 
-    console.log("API RESPONSE");
+<div class="title">
+Track Orders
+</div>
 
-    return response.json();
+<div class="desc">
+View assigned orders, customer details, and route navigation.
+</div>
 
-  })
+<div class="dots">
+<div class="dot"></div>
+<div class="dot active"></div>
+<div class="dot"></div>
+</div>
 
-  .then(data => {
+<button class="nextBtn" onclick="nextSlide()">
+Next
+</button>
 
-    console.log("API DATA:", data);
+</div>
 
-    if(data.status === 1){
+<!-- SLIDE 3 -->
 
-      const p = data.product;
+<div class="slide">
 
-      document.getElementById("result").innerHTML = `
+<img src="https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=1200&auto=format&fit=crop">
 
-        <h3>
-          ${p.product_name || "No Name"}
-        </h3>
+<div class="title">
+Start Earning
+</div>
 
-        <p>
-          Brand:
-          ${p.brands || "Unknown"}
-        </p>
+<div class="desc">
+Join CEZZO delivery network and start earning with every order.
+</div>
 
-        <p>
-          Barcode:
-          ${decodedText}
-        </p>
+<div class="dots">
+<div class="dot"></div>
+<div class="dot"></div>
+<div class="dot active"></div>
+</div>
 
-        <img
-          src="${p.image_url || ''}"
-          width="150"
-        >
+<button class="nextBtn" onclick="showSignup()">
+Get Started
+</button>
 
-      `;
+</div>
 
-    }else{
+</div>
 
-      document.getElementById("result").innerHTML = `
+<!-- SIGNUP FORM -->
 
-        <h3>
-          Barcode Found ✅
-        </h3>
+<div class="signup" id="signup">
 
-        <p>
-          ${decodedText}
-        </p>
+<div class="formTitle">
+Create Account
+</div>
 
-        <p>
-          Product not in database
-        </p>
+<div class="formDesc">
+Signup as a CEZZO Delivery Partner
+</div>
 
-      `;
+<div class="inputBox">
+<label>Full Name</label>
+<input type="text" placeholder="Enter full name">
+</div>
 
-    }
+<div class="inputBox">
+<label>Mobile Number</label>
+<input type="tel" placeholder="Enter mobile number">
+</div>
 
-  })
+<div class="inputBox">
+<label>Email Address</label>
+<input type="email" placeholder="Enter email address">
+</div>
 
-  .catch(error => {
+<div class="inputBox">
+<label>Password</label>
+<input type="password" placeholder="Create password">
+</div>
 
-    console.error(error);
+<div class="inputBox">
+<label>Vehicle Number</label>
+<input type="text" placeholder="Enter bike number">
+</div>
 
-    document.getElementById("result").innerHTML =
-      "API Error";
+<div class="inputBox">
+<label>Home Address</label>
+<input type="text" placeholder="Enter home address">
+</div>
 
-  });
+<div class="inputBox">
+<label>Aadhar Number</label>
+<input type="text" placeholder="Enter Aadhar number">
+</div>
+
+<div class="inputBox">
+<label>PAN Number</label>
+<input type="text" placeholder="Enter PAN number">
+</div>
+
+<div class="inputBox">
+<label>Upload Photo With Bike</label>
+
+<label class="uploadBox">
+
+<input type="file" hidden>
+
+
+
+<div class="uploadTitle">
+Upload Photo With Bike
+</div>
+
+<div class="uploadDesc">
+JPG, PNG or JPEG supported
+</div>
+
+<div class="uploadBtn">
+Select Photo
+</div>
+
+</label>
+
+</div>
+
+<div class="inputBox">
+<label>Upload Driving License</label>
+
+<label class="uploadBox">
+
+<input type="file" hidden>
+
+
+
+<div class="uploadTitle">
+Upload Driving License
+</div>
+
+<div class="uploadDesc">
+Upload clear driving license image
+</div>
+
+<div class="uploadBtn">
+Select License
+</div>
+
+</label>
+
+</div>
+
+<button class="signupBtn">
+Signup
+</button>
+
+<div class="loginText">
+Already have account? <span onclick="showLogin()">Login</span>
+</div>
+
+</div>
+
+<!-- LOGIN -->
+
+<div class="signup" id="loginPage">
+
+<div class="formTitle">
+Welcome Back
+</div>
+
+<div class="formDesc">
+Login to continue delivery orders
+</div>
+
+<div class="inputBox">
+<label>Bike Number</label>
+<input type="text" placeholder="Enter vehicle number">
+</div>
+
+<div class="inputBox">
+<label>Password</label>
+<input type="password" placeholder="Enter password">
+</div>
+
+<button class="signupBtn">
+Login
+</button>
+
+<div class="loginText">
+Don't have account? <span onclick="showSignupPage()">Signup</span>
+</div>
+
+</div>
+
+</div>
+<script type="module">
+
+import { createClient }
+from 'https://esm.sh/@supabase/supabase-js'
+
+const supabase = createClient(
+'https://izoipzriynkcjtwuzrfu.supabase.co',
+'sb_publishable_7ZRL1Y4JAppLTJonepuTIw_UQyGjVVw'
+)
+/* SLIDER */
+
+let current = 0
+
+const slides = document.querySelectorAll('.slide')
+
+window.nextSlide = function(){
+
+slides[current].classList.remove('active')
+
+current++
+
+slides[current].classList.add('active')
 
 }
 
-function onScanFailure(error){
+window.showSignup = function(){
+
+document
+.getElementById('slider')
+.style.display = 'none'
+
+document
+.getElementById('signup')
+.classList.add('active')
 
 }
 
-const scanner =
-  new Html5QrcodeScanner(
+window.showLogin = function(){
 
-    "reader",
+document
+.getElementById('signup')
+.classList.remove('active')
 
-    {
-      fps:10,
-      qrbox:250
-    },
+document
+.getElementById('loginPage')
+.classList.add('active')
 
-    false
+}
 
-  );
+window.showSignupPage = function(){
 
-scanner.render(
-  onScanSuccess,
-  onScanFailure
-);
+document
+.getElementById('loginPage')
+.classList.remove('active')
+
+document
+.getElementById('signup')
+.classList.add('active')
+
+}
+
+/* SHAKE EFFECT */
+
+const shakeStyle =
+document.createElement('style')
+
+shakeStyle.innerHTML = `
+
+.shake{
+animation:shake .35s;
+border:2px solid #ef4444 !important;
+background:#fef2f2 !important;
+}
+
+@keyframes shake{
+
+0%{transform:translateX(0)}
+25%{transform:translateX(-5px)}
+50%{transform:translateX(5px)}
+75%{transform:translateX(-5px)}
+100%{transform:translateX(0)}
+
+}
+
+`
+
+document.head.appendChild(shakeStyle)
+
+/* SUCCESS POPUP */
+function showMessage(text,type='success'){
+
+const old =
+document.querySelector('.bottomMessage')
+
+if(old){
+old.remove()
+}
+
+const popup =
+document.createElement('div')
+
+popup.className = 'bottomMessage'
+
+popup.innerText = text
+
+popup.style.cssText = `
+
+position:fixed;
+bottom:25px;
+left:50%;
+transform:translateX(-50%);
+background:${
+type === 'error'
+? '#dc2626'
+: '#111827'
+};
+color:#fff;
+padding:15px 22px;
+border-radius:18px;
+font-size:14px;
+font-weight:700;
+z-index:999999;
+box-shadow:0 15px 35px rgba(0,0,0,.18);
+animation:slideUp .3s ease;
+max-width:90%;
+text-align:center;
+
+`
+
+document.body.appendChild(popup)
+
+setTimeout(()=>{
+
+popup.style.opacity = '0'
+popup.style.transform =
+'translateX(-50%) translateY(20px)'
+
+},2500)
+
+setTimeout(()=>{
+
+popup.remove()
+
+},3000)
+
+}
+
+/* SIGNUP */
+
+const signupBtn =
+document.querySelector('#signup .signupBtn')
+
+signupBtn.addEventListener('click', signupUser)
+
+async function signupUser(){
+
+const inputs =
+document.querySelectorAll('#signup input')
+
+let valid = true
+
+inputs.forEach(input=>{
+
+if(
+input.type !== 'file' &&
+!input.value.trim()
+){
+
+valid = false
+
+input.classList.add('shake')
+
+setTimeout(()=>{
+
+input.classList.remove('shake')
+
+},500)
+
+}
+
+})
+
+const photoFile =
+inputs[8].files[0]
+
+const licenseFile =
+inputs[9].files[0]
+
+if(!photoFile){
+
+showMessage(
+'Upload photo with bike',
+'error'
+)
+return
+
+}
+
+if(!licenseFile){
+
+showMessage(
+'Upload driving license',
+'error'
+)
+return
+
+}
+
+if(!valid){
+return
+}
+
+/* VALUES */
+
+const full_name =
+inputs[0].value
+
+const mobile =
+inputs[1].value
+
+const email =
+inputs[2].value
+
+const password =
+inputs[3].value
+
+const vehicle_number =
+inputs[4].value
+
+const home_address =
+inputs[5].value
+
+const aadhar_number =
+inputs[6].value
+
+const pan_number =
+inputs[7].value
+
+/* PHOTO UPLOAD */
+
+const photoName =
+'photos/' +
+Date.now() +
+'_' +
+photoFile.name.replaceAll(' ','_')
+const { error:photoError } =
+await supabase.storage
+.from('delivery_boy_photos')
+.upload(
+photoName,
+photoFile,
+{
+cacheControl:'3600',
+upsert:true,
+contentType:photoFile.type
+}
+)
+if(photoError){
+
+showMessage(
+'Photo Upload Failed',
+'error'
+)
+return
+
+}
+
+const photo_url =
+supabase.storage
+.from('delivery_boy_photos')
+.getPublicUrl(photoName)
+.data.publicUrl
+
+/* LICENSE UPLOAD */
+
+const licenseName =
+'licenses/' +
+Date.now() +
+'_' +
+licenseFile.name.replaceAll(' ','_')
+const { error:licenseError } =
+await supabase.storage
+.from('delivery_boy_licenses')
+.upload(
+licenseName,
+licenseFile,
+{
+cacheControl:'3600',
+upsert:true,
+contentType:licenseFile.type
+}
+)
+if(licenseError){
+
+showMessage(
+'License Upload Failed',
+'error'
+)
+return
+
+}
+
+const license_url =
+supabase.storage
+.from('delivery_boy_licenses')
+.getPublicUrl(licenseName)
+.data.publicUrl
+
+/* INSERT TO SUPABASE */
+
+const { error } = await supabase
+.from('delivery_boys')
+.insert({
+
+full_name,
+mobile,
+email,
+password,
+vehicle_number,
+home_address,
+aadhar_number,
+pan_number,
+
+photo_url,
+
+license_url,
+
+status:'Not Approved',
+
+is_active:true
+
+})
+
+if(error){
+
+console.log(error)
+
+showMessage('Signup Failed','error')
+return
+
+}
+
+/* SUCCESS */
+
+showMessage(
+'Signup Successfully'
+)
+/* CLEAR FORM */
+
+inputs.forEach(input=>{
+
+if(input.type === 'file'){
+input.value = ''
+}else{
+input.value = ''
+}
+
+})
+
+/* AUTO LOGIN PAGE */
+
+setTimeout(()=>{
+
+document
+.getElementById('signup')
+.classList.remove('active')
+
+document
+.getElementById('loginPage')
+.classList.add('active')
+
+},3000)
+
+}
+
+/* LOGIN */
+
+const loginBtn =
+document.querySelector('#loginPage .signupBtn')
+
+loginBtn.addEventListener('click', loginUser)
+
+async function loginUser(){
+
+const vehicle =
+document.querySelectorAll('#loginPage input')[0]
+
+const password =
+document.querySelectorAll('#loginPage input')[1]
+
+if(!vehicle.value){
+
+vehicle.classList.add('shake')
+
+setTimeout(()=>{
+vehicle.classList.remove('shake')
+},500)
+
+return
+
+}
+
+if(!password.value){
+
+password.classList.add('shake')
+
+setTimeout(()=>{
+password.classList.remove('shake')
+},500)
+
+return
+
+}
+
+const { data,error } = await supabase
+.from('delivery_boys')
+.select('*')
+.eq('vehicle_number', vehicle.value)
+.eq('password', password.value)
+.single()
+
+if(error || !data){
+
+showMessage(
+'Invalid Login',
+'error'
+)
+return
+
+}
+
+if(data.status !== 'Approved'){
+
+showMessage(
+'Your account is not approved yet',
+'error'
+)
+return
+
+}
+
+showMessage(
+'Login Successful'
+)
+setTimeout(()=>{
+
+window.location.href =
+'dashboard.html'
+
+},2000)
+
+}
 
 </script>
-
 </body>
 </html>
